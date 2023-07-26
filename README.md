@@ -1,1 +1,1 @@
-# Panit.io
+# Paint.io
