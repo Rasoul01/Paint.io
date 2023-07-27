@@ -14,16 +14,8 @@ public class Board {
 
         for (int i = topLeftCorner.getX(); i <= bottomRightCorner.getX(); i++)
             for (int j = topLeftCorner.getY(); j <= bottomRightCorner.getY(); j++) {
-
-                Tile tile;
-                tile = tilesMap.get(new Coordinate(i, j));
-                if (tile == null) {
-                    tile = new Tile(i ,j);
-                    tilesMap.put(new Coordinate(i, j), tile);
-                }
-                areaTiles.add(tile);
+                areaTiles.add(getTile(new Coordinate(i, j)));
             }
-
         return areaTiles;
     }
 

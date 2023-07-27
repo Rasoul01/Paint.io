@@ -59,13 +59,21 @@ public abstract class Player {
 
     public void processMovement(Board board, CopyOnWriteArrayList<Player> playersList) {
 
+        // remove owned tile if other player has captured it
+        ownedTilesList.removeIf(ownedTile -> ownedTile.getOwner() != this);
+
+
+        Tile tile = board.getTile(new Coordinate(x, y));
+
         // first check for two player collision so both player would get terminated not just one of them
         // (because of statement (tile.getOwner() == null && tile.getTrackOwner() != this) in lines below)
         for (Player player : playersList) {
             if (player != this) {
                 if (player.getX() == this.getX() && player.getY() == this.getY()) {
-                    player.terminate(playersList);
-                    this.terminate(playersList);
+                    if (tile.getOwner() != player)
+                        player.terminate(playersList);
+                    if (tile.getOwner() != this)
+                        this.terminate(playersList);
                 }
             }
         }
@@ -73,8 +81,6 @@ public abstract class Player {
         // Added if statement because player movement would be processed once
         // after termination so one extra track tile would appear on game board
         if (isAlive) {
-
-            Tile tile = board.getTile(new Coordinate(x, y));
 
             if (tile.getOwner() != this && tile.getTrackOwner() == null) {
                 tile.setTrackOwner(this);
@@ -84,14 +90,25 @@ public abstract class Player {
                 tile.setTrackOwner(this);
                 trackTilesList.add(tile);
             } else if (tile.getOwner() == this && trackTilesList.size() > 0) {
-            checkBox();
+                fillTrack();
             }
         }
 
     }
 
-    private void checkBox() {
+    private void fillTrack() {
 
+        ownedTilesList.addAll(trackTilesList);
+        for (Tile tile : trackTilesList) {
+            tile.setOwner(this);
+        }
+        trackTilesList.clear();
+
+        /*
+        *
+        *
+        *
+        */
     }
 
     private void terminate(CopyOnWriteArrayList<Player> playersList) {

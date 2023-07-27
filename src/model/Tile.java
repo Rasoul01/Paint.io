@@ -29,13 +29,8 @@ public class Tile {
 
     }
 
-    public Coordinate getCoordinate () {
-        return new Coordinate(x, y);
-    }
-
     @Override
     public String toString() {      //REMOVE
         return "[" + x + " , " + y + "]     Owner: " + owner + "    track owner: " + trackOwner;
     }
 }
-
