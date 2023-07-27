@@ -96,6 +96,14 @@ public class GameController extends JPanel {
         }
     }
 
+    public CopyOnWriteArrayList<Player> getPlayersList() {
+        return playersList;
+    }
+
+    public Board getBoard() {
+        return board;
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);

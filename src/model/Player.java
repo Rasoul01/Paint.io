@@ -1,7 +1,10 @@
 package model;
 
+import application.GameController;
+
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -12,8 +15,10 @@ public abstract class Player {
     String username;
     private boolean isAlive;
     int x, y;
-    ArrayList<Tile> trackTilesList = new ArrayList<>();
-    ArrayList<Tile> ownedTilesList = new ArrayList<>();
+    HashSet<Tile> trackTilesList = new HashSet<>();
+    HashSet<Tile> ownedTilesList = new HashSet<>();
+    long lastLaserShotTime;
+    boolean isRocketLaunched = false;
 
     Random r = new Random();
 
@@ -85,7 +90,7 @@ public abstract class Player {
             if (tile.getOwner() != this && tile.getTrackOwner() == null) {
                 tile.setTrackOwner(this);
                 trackTilesList.add(tile);
-            } else if (tile.getOwner() == null && tile.getTrackOwner() != this) {
+            } else if (tile.getTrackOwner() != null && tile.getTrackOwner() != this) {
                 tile.getTrackOwner().terminate(playersList);
                 tile.setTrackOwner(this);
                 trackTilesList.add(tile);
@@ -101,6 +106,7 @@ public abstract class Player {
         ownedTilesList.addAll(trackTilesList);
         for (Tile tile : trackTilesList) {
             tile.setOwner(this);
+            tile.setTrackOwner(null);
         }
         trackTilesList.clear();
 
@@ -109,6 +115,66 @@ public abstract class Player {
         *
         *
         */
+    }
+
+    public void fire(Gun gun, GameController gameController) {
+        CopyOnWriteArrayList<Player> playersList = gameController.getPlayersList();
+        Board board = gameController.getBoard();
+        long now = System.currentTimeMillis();
+
+        if (gun == Gun.ROCKET) {
+            if (!isRocketLaunched) {
+                isRocketLaunched = true;
+                int targetX = x;
+                int targetY = y;
+
+                if (currentDirection == Direction.UP) {
+                    targetY -= 5;
+                } else if (currentDirection == Direction.DOWN) {
+                    targetY += 5;
+                } else if (currentDirection == Direction.RIGHT) {
+                    targetX += 5;
+                } else if (currentDirection == Direction.LEFT) {
+                    targetX -= 5;
+                }
+
+                ArrayList<Tile> targetTiles = board.getAreaTiles(new Coordinate(targetX - 1, targetY - 1), new Coordinate(targetX + 1, targetY + 1));
+                for (Tile tile : targetTiles) {
+                    tile.setOwner(this);
+                    ownedTilesList.add(tile);
+                }
+
+                for (Player player : playersList) {
+                    if (player.getX() >= targetX - 1 && player.getX() <= targetX + 1 &&
+                            player.getY() >= targetY - 1 && player.getY() <= targetY + 1)
+                        player.terminate(playersList);
+                }
+            }
+        }
+
+        else if (gun == Gun.LASER) {
+            if (now - lastLaserShotTime >= 3000 || lastLaserShotTime == 0) {
+                lastLaserShotTime = now;
+
+                for (Player player : playersList) {
+                    if (player != this) {
+                        if (currentDirection == Direction.UP) {
+                            if (player.getX() == x && player.getY() < y)
+                                player.terminate(playersList);
+                        } else if (currentDirection == Direction.DOWN) {
+                            if (player.getX() == x && player.getY() > y)
+                                player.terminate(playersList);
+                        } else if (currentDirection == Direction.RIGHT) {
+                            if (player.getX() > x && player.getY() == y)
+                                player.terminate(playersList);
+                        } else if (currentDirection == Direction.LEFT) {
+                            if (player.getX() < x && player.getY() == y)
+                                player.terminate(playersList);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private void terminate(CopyOnWriteArrayList<Player> playersList) {
@@ -176,4 +242,8 @@ public abstract class Player {
     public String toString() {
         return username;
     }
+}
+
+enum Gun {
+    LASER, ROCKET
 }
