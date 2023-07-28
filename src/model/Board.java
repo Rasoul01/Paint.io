@@ -95,7 +95,8 @@ public class Board {
         }
 
         //other
-        g.setColor(mainPlayer.getColor());
+        g.setFont(new Font(null, Font.BOLD, 30));
+        g.setColor(Color.BLACK);
         g.drawString("Point: " + mainPlayer.getOwnedTilesCount(), 50 , 50);
         g.drawString("Coordinate: " + mainPlayer.getX()+ " , " + -1 * mainPlayer.getY(), 50 , 100);
     }

@@ -90,11 +90,15 @@ public abstract class Player {
             if (tile.getOwner() != this && tile.getTrackOwner() == null) {
                 tile.setTrackOwner(this);
                 trackTilesList.add(tile);
-            } else if (tile.getTrackOwner() != null && tile.getTrackOwner() != this) {
+            }
+
+            if (tile.getTrackOwner() != null && tile.getTrackOwner() != this) {
                 tile.getTrackOwner().terminate(playersList);
                 tile.setTrackOwner(this);
                 trackTilesList.add(tile);
-            } else if (tile.getOwner() == this && trackTilesList.size() > 0) {
+            }
+
+            if (tile.getOwner() == this && trackTilesList.size() > 0) {
                 fillTrack();
             }
         }

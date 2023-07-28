@@ -7,20 +7,21 @@ public class Colors {
 
     private static final ArrayList<Color> colorsList = new ArrayList<>(){{
         add(Color.BLUE);
-        add(Color.GREEN);
         add(Color.RED);
+        add(Color.GREEN);
         add(new Color(117,168,50));
-//        add(Color.);
-//        add(Color.);
-//        add(Color.);
-//        add(Color.);
-//        add(Color.);
-//        add(Color.);
-//        add(Color.);
-//        add(Color.);
+        add(new Color(120,30,130));
+        add(new Color(170,110,240));
+        add(new Color(245,80,230));
+        add(new Color(245,80,50));
+        add(new Color(210,170,50));
+        add(new Color(240,220,170));
+        add(new Color(90,210,245));
+        add(new Color(60,210,180));
     }};
 
-    private static int i = (int) (Math.random() * 10);
+//    private static int i = (int) (Math.random() * 10);
+    private static int i = 3;
 
     public static Color getColor() {
         i++;
