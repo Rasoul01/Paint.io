@@ -59,14 +59,9 @@ public class GameController extends JPanel {
     }
 
     private void  tick () {
-
         if(running) {
             for (Player player : playersList) {
-
-                if (player instanceof HumanPlayer HP)
-                    HP.processInput(this);
-
-                player.move();
+                player.act(this);
                 player.processMovement(board, playersList);
             }
         }

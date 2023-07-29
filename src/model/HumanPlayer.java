@@ -12,20 +12,7 @@ public class HumanPlayer extends Player {
     }
 
     @Override
-    public void move() {
-
-        if (currentDirection == Direction.UP) {
-            y++;
-        } else if (currentDirection == Direction.DOWN) {
-            y--;
-        } else if (currentDirection == Direction.RIGHT) {
-            x++;
-        } else if (currentDirection == Direction.LEFT) {
-            x--;
-        }
-    }
-
-    public void processInput(GameController gameController) {
+    public void act(GameController gameController) {
 
         gameController.setFocusable(true);
         gameController.requestFocus();
@@ -49,5 +36,7 @@ public class HumanPlayer extends Player {
                 }
             }
         });
+
+        move();
     }
 }

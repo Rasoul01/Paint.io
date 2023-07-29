@@ -17,6 +17,7 @@ public abstract class Player {
     int x, y;
     HashSet<Tile> trackTilesList = new HashSet<>();
     HashSet<Tile> ownedTilesList = new HashSet<>();
+    Tile lastOwnedTile;
     long lastLaserShotTime;
     boolean isRocketLaunched = false;
 
@@ -31,7 +32,16 @@ public abstract class Player {
         return username;
     }
 
-    public abstract void move();
+    public void move() {
+        switch (currentDirection) {
+            case UP -> y++;
+            case DOWN -> y--;
+            case RIGHT -> x++;
+            case LEFT -> x--;
+        }
+    }
+
+    public abstract void act(GameController gameController);
 
     public void spawn(Board board, CopyOnWriteArrayList<Player> playersList) {
 
@@ -59,6 +69,7 @@ public abstract class Player {
         for (Tile tile : spawnTiles) {
             tile.setOwner(this);
             ownedTilesList.add(tile);
+            lastOwnedTile = tile;
         }
 
         System.out.println(username + ": " + x + " , " + y);    //REMOVE
@@ -113,6 +124,7 @@ public abstract class Player {
         for (Tile tile : trackTilesList) {
             tile.setOwner(this);
             tile.setTrackOwner(null);
+            lastOwnedTile = tile;
         }
         trackTilesList.clear();
 
@@ -130,7 +142,7 @@ public abstract class Player {
 
         if (gun == Gun.ROCKET) {
             if (!isRocketLaunched) {
-                isRocketLaunched = true;
+//                isRocketLaunched = true;
                 int targetX = x;
                 int targetY = y;
 
@@ -141,16 +153,16 @@ public abstract class Player {
                     case LEFT -> targetX -= 5;
                 }
 
-                ArrayList<Tile> targetTiles = board.getAreaTiles(new Coordinate(targetX - 1, targetY + 1), new Coordinate(targetX + 1, targetY - 1));
-                for (Tile tile : targetTiles) {
-                    tile.setOwner(this);
-                    ownedTilesList.add(tile);
-                }
-
                 for (Player player : playersList) {
                     if (player.getX() >= targetX - 1 && player.getX() <= targetX + 1 &&
                             player.getY() >= targetY - 1 && player.getY() <= targetY + 1)
                         player.terminate(playersList);
+                }
+
+                ArrayList<Tile> targetTiles = board.getAreaTiles(new Coordinate(targetX - 1, targetY + 1), new Coordinate(targetX + 1, targetY - 1));
+                for (Tile tile : targetTiles) {
+                    tile.setOwner(this);
+                    ownedTilesList.add(tile);
                 }
             }
         }

@@ -43,7 +43,7 @@ class MenuPanel extends JPanel {
         startButton = new JButton("Start");
         lblWarn = new JLabel();
         botCountSpinner = new JSpinner(new SpinnerNumberModel(5, 1, 20, 1));
-        botLevelSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 3, 1));
+        botLevelSpinner = new JSpinner(new SpinnerNumberModel(2, 1, 3, 1));
         gameSpeedSpinner = new JSpinner(new SpinnerNumberModel(3, 1, 5, 1));
         JLabel lblBotCounter = new JLabel("Bot Count:", JLabel.RIGHT);
         JLabel lblBotLevel = new JLabel("Bot Level:", JLabel.RIGHT);
