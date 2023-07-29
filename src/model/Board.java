@@ -12,8 +12,8 @@ public class Board {
 
         ArrayList<Tile> areaTiles = new ArrayList<>();
 
-        for (int i = topLeftCorner.getX(); i <= bottomRightCorner.getX(); i++)
-            for (int j = topLeftCorner.getY(); j <= bottomRightCorner.getY(); j++) {
+        for (int j = topLeftCorner.getY(); j >= bottomRightCorner.getY(); j--)
+            for (int i = topLeftCorner.getX(); i <= bottomRightCorner.getX(); i++) {
                 areaTiles.add(getTile(new Coordinate(i, j)));
             }
         return areaTiles;
@@ -22,11 +22,11 @@ public class Board {
     public void draw (Graphics g, CopyOnWriteArrayList<Player> playersList, HumanPlayer mainPlayer,
                       int colsCount, int rowsCount, int unitSize, int tickCounter, int tickReset) {
 
-//         coordinates start from top-left corner
+//        coordinates start from top-left corner
 
 //        draw Background
-        for (int i = 0; i <colsCount; i++) {
-            for (int j = 0; j < rowsCount; j++) {
+        for (int j = 0; j < rowsCount; j++) {
+            for (int i = 0; i < colsCount; i++) {
                 if ((i + j) % 2 == 0) {
                     g.setColor(Color.lightGray);
                 } else {
@@ -38,13 +38,13 @@ public class Board {
 
 
         //draw tiles
-        ArrayList<Tile> areaTiles = getAreaTiles(new Coordinate(mainPlayer.getX() - (colsCount / 2), mainPlayer.getY() - (rowsCount / 2)),
-                new Coordinate(mainPlayer.getX() + (colsCount / 2), mainPlayer.getY() + (rowsCount / 2)));
+        ArrayList<Tile> areaTiles = getAreaTiles(new Coordinate(mainPlayer.getX() - (colsCount / 2), mainPlayer.getY() + (rowsCount / 2)),
+                new Coordinate(mainPlayer.getX() + (colsCount / 2), mainPlayer.getY() - (rowsCount / 2)));
 
         int tileCounter = 0;
 
-        for (int i = 0; i < colsCount; i++) {
-            for (int j = 0; j < rowsCount; j++) {
+        for (int j = 0; j < rowsCount; j++) {
+            for (int i = 0; i < colsCount; i++) {
 
                 Tile tile = areaTiles.get(tileCounter);
 
@@ -67,8 +67,6 @@ public class Board {
 
         //draw players
         int drawX, drawY;
-        int screenWidth = colsCount * unitSize;
-        int screenHeight = rowsCount * unitSize;
         g.setFont(new Font(null, Font.PLAIN, 30));
 
         for (Player player : playersList) {
@@ -77,8 +75,8 @@ public class Board {
                     Math.abs(player.getY() - mainPlayer.getY()) < ((rowsCount / 2) + 1)) {
 
                 // x and y position relative to humanPlayer at which player should be drawn
-                drawX = (player.getX() - mainPlayer.getX()) * unitSize + ((screenWidth - unitSize) / 2);
-                drawY = (player.getY() - mainPlayer.getY()) * unitSize + ((screenHeight - unitSize) / 2);
+                drawX = (player.getX() - mainPlayer.getX() + (colsCount / 2)) * unitSize;
+                drawY = ((-1 * (player.getY() - mainPlayer.getY())) + (rowsCount / 2)) * unitSize;
 
                 // For all other players than mainPlayer we need to smooth animations regarding animation smoothing of humanPlayer
 //                if (player != mainPlayer) {
@@ -97,7 +95,7 @@ public class Board {
         //other
         g.setColor(mainPlayer.getColor());
         g.drawString("Point: " + mainPlayer.getOwnedTilesCount(), 50 , 50);
-        g.drawString("Coordinate: " + mainPlayer.getX()+ " , " + -1 * mainPlayer.getY(), 50 , 100);
+        g.drawString("Coordinate: " + mainPlayer.getX()+ " , " + mainPlayer.getY(), 50 , 100);
     }
 
     public Tile getTile (Coordinate coordinate) {

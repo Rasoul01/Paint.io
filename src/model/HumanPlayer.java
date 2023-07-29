@@ -15,9 +15,9 @@ public class HumanPlayer extends Player {
     public void move() {
 
         if (currentDirection == Direction.UP) {
-            y--;
-        } else if (currentDirection == Direction.DOWN) {
             y++;
+        } else if (currentDirection == Direction.DOWN) {
+            y--;
         } else if (currentDirection == Direction.RIGHT) {
             x++;
         } else if (currentDirection == Direction.LEFT) {

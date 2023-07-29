@@ -20,8 +20,6 @@ public abstract class Player {
     long lastLaserShotTime;
     boolean isRocketLaunched = false;
 
-    Random r = new Random();
-
     public Player(String username) {
         this.username = username;
         color = Colors.getColor();
@@ -40,26 +38,30 @@ public abstract class Player {
         int playersCount = playersList.size();
         int bound = playersCount * 10;
         boolean suitable = false;
+        Random r = new Random();
 
         do {
             y = r.nextInt(-bound, bound);
             x = r.nextInt(-bound, bound);
 
             for (Player player : playersList) {
-                if ((Math.abs(player.getX() - x) > 10 && Math.abs(player.getY() - y) > 10)) {
+                if (player != this) {
+                    if (Math.abs(player.getX() - x) < 10 || Math.abs(player.getY() - y) < 10) {
+                        suitable = false;
+                        break;
+                    }
                     suitable = true;
-                    break;
                 }
             }
         } while (!suitable);
 
-        ArrayList<Tile> spawnTiles = board.getAreaTiles(new Coordinate(x - 1, y - 1), new Coordinate(x + 1, y + 1));
+        ArrayList<Tile> spawnTiles = board.getAreaTiles(new Coordinate(x - 1, y + 1), new Coordinate(x + 1, y - 1));
         for (Tile tile : spawnTiles) {
             tile.setOwner(this);
             ownedTilesList.add(tile);
         }
 
-        System.out.println(username + ": " + x + " , " + -1 * y);    //REMOVE
+        System.out.println(username + ": " + x + " , " + y);    //REMOVE
     }
 
     public void processMovement(Board board, CopyOnWriteArrayList<Player> playersList) {
@@ -124,21 +126,21 @@ public abstract class Player {
 
         if (gun == Gun.ROCKET) {
             if (!isRocketLaunched) {
-                isRocketLaunched = true;
+//                isRocketLaunched = true;
                 int targetX = x;
                 int targetY = y;
 
                 if (currentDirection == Direction.UP) {
-                    targetY -= 5;
-                } else if (currentDirection == Direction.DOWN) {
                     targetY += 5;
+                } else if (currentDirection == Direction.DOWN) {
+                    targetY -= 5;
                 } else if (currentDirection == Direction.RIGHT) {
                     targetX += 5;
                 } else if (currentDirection == Direction.LEFT) {
                     targetX -= 5;
                 }
 
-                ArrayList<Tile> targetTiles = board.getAreaTiles(new Coordinate(targetX - 1, targetY - 1), new Coordinate(targetX + 1, targetY + 1));
+                ArrayList<Tile> targetTiles = board.getAreaTiles(new Coordinate(targetX - 1, targetY + 1), new Coordinate(targetX + 1, targetY - 1));
                 for (Tile tile : targetTiles) {
                     tile.setOwner(this);
                     ownedTilesList.add(tile);
@@ -159,10 +161,10 @@ public abstract class Player {
                 for (Player player : playersList) {
                     if (player != this) {
                         if (currentDirection == Direction.UP) {
-                            if (player.getX() == x && player.getY() < y)
+                            if (player.getX() == x && player.getY() > y)
                                 player.terminate(playersList);
                         } else if (currentDirection == Direction.DOWN) {
-                            if (player.getX() == x && player.getY() > y)
+                            if (player.getX() == x && player.getY() < y)
                                 player.terminate(playersList);
                         } else if (currentDirection == Direction.RIGHT) {
                             if (player.getX() > x && player.getY() == y)
