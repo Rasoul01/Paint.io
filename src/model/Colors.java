@@ -20,8 +20,7 @@ public class Colors {
         add(new Color(60,210,180));
     }};
 
-//    private static int i = (int) (Math.random() * 10);
-    private static int i = 3;
+    private static int i = (int) (Math.random() * 10);
 
     public static Color getColor() {
         i++;

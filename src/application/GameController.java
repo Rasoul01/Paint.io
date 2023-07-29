@@ -14,8 +14,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class GameController extends JPanel {
 
     private HumanPlayer mainPlayer;
-    private CopyOnWriteArrayList<Player> playersList = new CopyOnWriteArrayList<>();
-    private Board board;
+    private final CopyOnWriteArrayList<Player> playersList = new CopyOnWriteArrayList<>();
+    private final Board board;
     private boolean running = false;
 
     // make sure colsCount & rowsCount match each other
@@ -107,7 +107,7 @@ public class GameController extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        board.draw(g, playersList, mainPlayer, colsCount, rowsCount, unitSize, tickCounter, tickReset);
+        board.draw(g, playersList, mainPlayer, colsCount, rowsCount, unitSize);
 //        Toolkit.getDefaultToolkit().sync(); //REMOVE
     }
 

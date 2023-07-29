@@ -5,7 +5,7 @@ public class Tile {
     Player owner;
     Player trackOwner;
 
-    private final int x, y;   //REMOVE
+    private final int x, y;
 
     public Tile(int x, int y) {
         this.x = x;

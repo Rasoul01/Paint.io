@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Board {
-    private HashMap<Coordinate, Tile> tilesMap = new HashMap<>();
+    private final HashMap<Coordinate, Tile> tilesMap = new HashMap<>();
 
     public ArrayList<Tile> getAreaTiles (Coordinate topLeftCorner, Coordinate bottomRightCorner) {
 
@@ -20,7 +20,7 @@ public class Board {
     }
 
     public void draw (Graphics g, CopyOnWriteArrayList<Player> playersList, HumanPlayer mainPlayer,
-                      int colsCount, int rowsCount, int unitSize, int tickCounter, int tickReset) {
+                      int colsCount, int rowsCount, int unitSize) {
 
 //        coordinates start from top-left corner
 
@@ -77,14 +77,6 @@ public class Board {
                 // x and y position relative to humanPlayer at which player should be drawn
                 drawX = (player.getX() - mainPlayer.getX() + (colsCount / 2)) * unitSize;
                 drawY = ((-1 * (player.getY() - mainPlayer.getY())) + (rowsCount / 2)) * unitSize;
-
-                // For all other players than mainPlayer we need to smooth animations regarding animation smoothing of humanPlayer
-//                if (player != mainPlayer) {
-//                    drawX += ((player.getDirectionX() - mainPlayer.getDirectionX()) * unitSize
-//                            * ((tickCounter + 1) / (double) tickReset));
-//                    drawY += ((player.getDirectionY() - mainPlayer.getDirectionY()) * unitSize
-//                            * ((tickCounter + 1) / (double) tickReset));
-//                }
 
                 g.setColor(Colors.darker(player.getColor()));
                 g.drawString(player.getUsername(), drawX , (int) (drawY - unitSize / 3.0));

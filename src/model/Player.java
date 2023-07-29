@@ -130,18 +130,15 @@ public abstract class Player {
 
         if (gun == Gun.ROCKET) {
             if (!isRocketLaunched) {
-//                isRocketLaunched = true;
+                isRocketLaunched = true;
                 int targetX = x;
                 int targetY = y;
 
-                if (currentDirection == Direction.UP) {
-                    targetY += 5;
-                } else if (currentDirection == Direction.DOWN) {
-                    targetY -= 5;
-                } else if (currentDirection == Direction.RIGHT) {
-                    targetX += 5;
-                } else if (currentDirection == Direction.LEFT) {
-                    targetX -= 5;
+                switch (currentDirection) {
+                    case UP -> targetY += 5;
+                    case DOWN -> targetY -= 5;
+                    case RIGHT -> targetX += 5;
+                    case LEFT -> targetX -= 5;
                 }
 
                 ArrayList<Tile> targetTiles = board.getAreaTiles(new Coordinate(targetX - 1, targetY + 1), new Coordinate(targetX + 1, targetY - 1));
@@ -164,18 +161,23 @@ public abstract class Player {
 
                 for (Player player : playersList) {
                     if (player != this) {
-                        if (currentDirection == Direction.UP) {
-                            if (player.getX() == x && player.getY() > y)
-                                player.terminate(playersList);
-                        } else if (currentDirection == Direction.DOWN) {
-                            if (player.getX() == x && player.getY() < y)
-                                player.terminate(playersList);
-                        } else if (currentDirection == Direction.RIGHT) {
-                            if (player.getX() > x && player.getY() == y)
-                                player.terminate(playersList);
-                        } else if (currentDirection == Direction.LEFT) {
-                            if (player.getX() < x && player.getY() == y)
-                                player.terminate(playersList);
+                        switch (currentDirection) {
+                            case UP -> {
+                                if (player.getX() == x && player.getY() > y)
+                                    player.terminate(playersList);
+                            }
+                            case DOWN -> {
+                                if (player.getX() == x && player.getY() < y)
+                                    player.terminate(playersList);
+                            }
+                            case RIGHT -> {
+                                if (player.getX() > x && player.getY() == y)
+                                    player.terminate(playersList);
+                            }
+                            case LEFT -> {
+                                if (player.getX() < x && player.getY() == y)
+                                    player.terminate(playersList);
+                            }
                         }
                     }
                 }
@@ -200,44 +202,12 @@ public abstract class Player {
         return x;
     }
 
-    public void setX(int x) {
-        this.x = x;
-    }
-
     public int getY() {
         return y;
     }
 
-    public void setY(int y) {
-        this.y = y;
-    }
-
     public Color getColor() {
         return color;
-    }
-
-    public Direction getCurrentDirection() {
-        return currentDirection;
-    }
-
-    public int getDirectionX() {
-        if (currentDirection == Direction.RIGHT) {
-            return 1;
-        } else if (currentDirection == Direction.LEFT) {
-            return -1;
-        } else {
-            return 0;
-        }
-    }
-
-    public int getDirectionY() {
-        if (currentDirection == Direction.UP) {
-            return 1;
-        } else if (currentDirection == Direction.DOWN) {
-            return -1;
-        } else  {
-            return 0;
-        }
     }
 
     public int getOwnedTilesCount() {
