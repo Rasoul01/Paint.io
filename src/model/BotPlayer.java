@@ -33,17 +33,17 @@ public class BotPlayer extends Player {
                                     player.getX() - this.x >= -1 && player.getX() - this.x <= 1)
                                 fire(Gun.ROCKET, gameController);
                         }
-                        case DOWN ->  {
+                        case DOWN -> {
                             if (player.getY() - this.y >= -6 && player.getY() - this.y <= -4 &&
                                     player.getX() - this.x >= -1 && player.getX() - this.x <= 1)
                                 fire(Gun.ROCKET, gameController);
                         }
-                        case RIGHT ->  {
+                        case RIGHT -> {
                             if (player.getX() - this.x >= 4 && player.getX() - this.x <= 6 &&
                                     player.getY() - this.y >= -1 && player.getY() - this.y <= 1)
                                 fire(Gun.ROCKET, gameController);
                         }
-                        case LEFT ->  {
+                        case LEFT -> {
                             if (player.getX() - this.x >= -6 && player.getX() - this.x <= -4 &&
                                     player.getY() - this.y >= -1 && player.getY() - this.y <= 1)
                                 fire(Gun.ROCKET, gameController);
@@ -65,9 +65,9 @@ public class BotPlayer extends Player {
             }
         }
 
-        Random r = new Random();
         if (trackTilesList.size() < 20) {
             // Occasionally changes bot direction
+            Random r = new Random();
             int ran = r.nextInt(20);
 
             if (ran == 1) {
@@ -81,15 +81,14 @@ public class BotPlayer extends Player {
             }
 
             move();
-            if (trackTilesList.size() == 19) {
-                targetTile = ownedTilesList.stream().toList().get(ran);
-            } else {
-                moveTo(targetTile.getX(), targetTile.getY());
-            }
+            if (trackTilesList.size() == 19)
+                targetTile = ownedTilesList.stream().toList().get(0);
+        } else {
+            moveTo(targetTile.getX(), targetTile.getY());
         }
     }
 
-    public void moveTo (int destinationX, int destinationY) {
+    public void moveTo(int destinationX, int destinationY) {
         int deltaX = destinationX - this.x;
         int deltaY = destinationY - this.y;
 
