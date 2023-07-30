@@ -17,7 +17,6 @@ public abstract class Player {
     int x, y;
     HashSet<Tile> trackTilesList = new HashSet<>();
     HashSet<Tile> ownedTilesList = new HashSet<>();
-    Tile lastOwnedTile;
     long lastLaserShotTime;
     boolean isRocketLaunched = false;
 
@@ -69,7 +68,6 @@ public abstract class Player {
         for (Tile tile : spawnTiles) {
             tile.setOwner(this);
             ownedTilesList.add(tile);
-            lastOwnedTile = tile;
         }
 
         System.out.println(username + ": " + x + " , " + y);    //REMOVE
@@ -80,8 +78,7 @@ public abstract class Player {
         // remove owned tile if other player has captured it
         ownedTilesList.removeIf(ownedTile -> ownedTile.getOwner() != this);
 
-
-        Tile tile = board.getTile(new Coordinate(x, y));
+        Tile tile = board.getTile(x, y);
 
         // first check for two player collision so both player would get terminated not just one of them
         // (because of statement (tile.getOwner() == null && tile.getTrackOwner() != this) in lines below)
@@ -112,27 +109,92 @@ public abstract class Player {
             }
 
             if (tile.getOwner() == this && trackTilesList.size() > 0) {
-                fillTrack();
+                fillTrack(board);
             }
         }
 
     }
 
-    private void fillTrack() {
-
+    private void fillTrack(Board board) {
+        // set track as owned tile
         ownedTilesList.addAll(trackTilesList);
         for (Tile tile : trackTilesList) {
             tile.setOwner(this);
             tile.setTrackOwner(null);
-            lastOwnedTile = tile;
         }
         trackTilesList.clear();
 
-        /*
-        *
-        *
-        *
-        */
+        // filling captured area using flood fill like algorithm
+        int maxX = ownedTilesList.stream().toList().get(0).getX();
+        int minX = maxX;
+        int maxY = ownedTilesList.stream().toList().get(0).getY();
+        int minY = maxY;
+        for (Tile t : ownedTilesList) {
+            if (t.getX() > maxX) maxX = t.getX();
+            if (t.getX() < minX) minX = t.getX();
+            if (t.getY() > maxY) maxY = t.getY();
+            if (t.getY() < minY) minY = t.getY();
+        }
+
+        ArrayList<Tile> outside = new ArrayList<>();
+        ArrayList<Tile> inside = new ArrayList<>();
+        ArrayList<Tile> queue = new ArrayList<>();
+        ArrayList<Tile> currArea = new ArrayList<>();
+
+        ArrayList<Tile> areaTile = board.getAreaTiles(new Coordinate(minX, maxY), new Coordinate(maxX, minY));
+        for (Tile tile : areaTile) {
+            // looping through non-filled tiles to find separate areas that should be filled
+            if (tile.getOwner() != this && !outside.contains(tile) && !inside.contains(tile)) {
+                queue.add(tile);
+                currArea.add(tile);
+                boolean isBounded = true;
+                while (queue.size() > 0) {
+
+                    Tile currTile = queue.get(queue.size() - 1);
+                    queue.remove(queue.size() - 1);
+                    int posX = currTile.getX();
+                    int posY = currTile.getY();
+
+                    // if area isn't closed until bounds, it is an open area that shouldn't be filled
+                    if ((posX == minX || posX == maxX || posY == minY || posY == maxY) && currTile.getOwner() != this)
+                        isBounded = false;
+
+                    // Check if the adjacent tiles are valid
+                    for (int i = posX - 1; i <= posX + 1; i += 2) {
+                        Tile adjacent = board.getTile(i, posY);
+                        if (adjacent.getOwner() != this && !currArea.contains(adjacent) &&
+                                i <= maxX && i >= minX && posY <= maxY && posY >= minY) {
+                            queue.add(adjacent);
+                            currArea.add(adjacent);
+                        }
+                    }
+
+                    for (int j = posY - 1; j <= posY + 1; j += 2) {
+                        Tile adjacent = board.getTile(posX, j);
+
+                        if (adjacent.getOwner() != this && !currArea.contains(adjacent) &&
+                                posX <= maxX && posX >= minX && j <= maxY && j >= minY) {
+                            queue.add(adjacent);
+                            currArea.add(adjacent);
+                        }
+                    }
+                }
+
+                if (isBounded) {
+                    inside.addAll(currArea);
+                } else {
+                    outside.addAll(currArea);
+                }
+                currArea.clear();
+            }
+        }
+
+        ownedTilesList.addAll(inside);
+        for (Tile tile : inside) {
+            tile.setOwner(this);
+        }
+        inside.clear();
+        outside.clear();
     }
 
     public void fire(Gun gun, GameController gameController) {

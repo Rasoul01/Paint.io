@@ -8,6 +8,7 @@ import java.util.Random;
 public class BotPlayer extends Player {
     private final int level;
     private static int id;
+    private Tile targetTile;
 
     public BotPlayer(int level) {
         super("Bot");
@@ -58,15 +59,14 @@ public class BotPlayer extends Player {
 
             for (Tile tile : areaTiles) {
                 if (tile.getTrackOwner() != this && tile.getTrackOwner() != null) {
-                    System.out.println(username + " on Attack to " + tile.getTrackOwner()); //REMOVE
                     moveTo(tile.getX(), tile.getY());
                     return;
                 }
             }
         }
 
+        Random r = new Random();
         if (trackTilesList.size() < 20) {
-            Random r = new Random();
             // Occasionally changes bot direction
             int ran = r.nextInt(20);
 
@@ -81,8 +81,11 @@ public class BotPlayer extends Player {
             }
 
             move();
-        } else {
-            moveTo(lastOwnedTile.getX(), lastOwnedTile.getY());
+            if (trackTilesList.size() == 19) {
+                targetTile = ownedTilesList.stream().toList().get(ran);
+            } else {
+                moveTo(targetTile.getX(), targetTile.getY());
+            }
         }
     }
 
@@ -90,16 +93,10 @@ public class BotPlayer extends Player {
         int deltaX = destinationX - this.x;
         int deltaY = destinationY - this.y;
 
-        if (Math.abs(deltaX) > 0) {
-            if (deltaX < 0)
-                x--;
-            else if (deltaX > 0)
-                x++;
-        } else if (Math.abs(deltaY) > 0) {
-            if (deltaY < 0)
-                y--;
-            else if (deltaY > 0)
-                y++;
+        if (deltaX != 0 && (Math.random() < 0.5 || deltaY == 0)) {
+            x += deltaX / Math.abs(deltaX);
+        } else {
+            y += deltaY / Math.abs(deltaY);
         }
     }
 }

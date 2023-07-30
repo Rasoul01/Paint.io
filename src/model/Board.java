@@ -14,10 +14,11 @@ public class Board {
 
         for (int j = topLeftCorner.getY(); j >= bottomRightCorner.getY(); j--)
             for (int i = topLeftCorner.getX(); i <= bottomRightCorner.getX(); i++) {
-                areaTiles.add(getTile(new Coordinate(i, j)));
+                areaTiles.add(getTile(i, j));
             }
         return areaTiles;
     }
+    // git commit -am "Added fillTrack method, removed last owned tile (bot now moves to a random owned tile), changed moveTo method a bit & Changed getTile method signature"
 
     public void draw (Graphics g, CopyOnWriteArrayList<Player> playersList, HumanPlayer mainPlayer,
                       int colsCount, int rowsCount, int unitSize) {
@@ -91,7 +92,8 @@ public class Board {
         g.drawString("Coordinate: " + mainPlayer.getX()+ " , " + mainPlayer.getY(), 50 , 100);
     }
 
-    public Tile getTile (Coordinate coordinate) {
+    public Tile getTile (int x, int y) {
+        Coordinate coordinate = new Coordinate(x, y);
         Tile tile = tilesMap.get(coordinate);
         if (tile == null) {
             tile = new Tile(coordinate.getX(), coordinate.getY());
