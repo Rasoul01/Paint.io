@@ -1,14 +1,18 @@
 package model;
 
-import application.GameController;
+import application.Game;
 
 import java.awt.*;
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public abstract class Player {
+public abstract class Player implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     Direction currentDirection;
     private final Color color;
@@ -39,8 +43,6 @@ public abstract class Player {
             case LEFT -> x--;
         }
     }
-
-    public abstract void act(GameController gameController);
 
     public void spawn(Board board, CopyOnWriteArrayList<Player> playersList) {
 
@@ -197,14 +199,13 @@ public abstract class Player {
         outside.clear();
     }
 
-    public void fire(Gun gun, GameController gameController) {
-        CopyOnWriteArrayList<Player> playersList = gameController.getPlayersList();
-        Board board = gameController.getBoard();
-        long now = System.currentTimeMillis();
+    public void fire(Gun gun, Game game) {
+        CopyOnWriteArrayList<Player> playersList = game.getPlayersList();
+        Board board = game.getBoard();
 
         if (gun == Gun.ROCKET) {
             if (!isRocketLaunched) {
-//                isRocketLaunched = true;
+                isRocketLaunched = true;
                 int targetX = x;
                 int targetY = y;
 
@@ -230,6 +231,8 @@ public abstract class Player {
         }
 
         else if (gun == Gun.LASER) {
+            long now = System.currentTimeMillis();
+
             if (now - lastLaserShotTime >= 3000 || lastLaserShotTime == 0) {
                 lastLaserShotTime = now;
 
@@ -290,7 +293,7 @@ public abstract class Player {
 
     @Override
     public String toString() {
-        return username;
+        return '[' + username + ": " + x + " , " + y +']';
     }
 }
 

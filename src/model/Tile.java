@@ -1,6 +1,12 @@
 package model;
 
-public class Tile {
+import java.awt.*;
+import java.io.Serial;
+import java.io.Serializable;
+
+public class Tile implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     Player owner;
     Player trackOwner;
@@ -40,5 +46,16 @@ public class Tile {
     @Override
     public String toString() {      //REMOVE
         return "[" + x + " , " + y + "]     Owner: " + owner + "    track owner: " + trackOwner;
+    }
+
+    public Color getColor() {
+        if (owner != null && trackOwner == null) {
+            return owner.getColor();
+        } else if (owner == null && trackOwner != null) {
+            return Colors.lighter(trackOwner.getColor());
+        } else if (owner != null && trackOwner != null) {
+            return Colors.blend(owner.getColor(), trackOwner.getColor());
+        }
+        return new Color(255,255,255,0);
     }
 }

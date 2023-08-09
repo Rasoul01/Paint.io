@@ -1,42 +1,28 @@
 package model;
 
-import application.GameController;
+import application.Game;
+import application.SharedSources;
 
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.io.Serial;
 
 public class HumanPlayer extends Player {
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     public HumanPlayer(String username) {
         super(username);
     }
+    
+    public void processInput(int keyCode) {
+        Game game = SharedSources.game;
 
-    @Override
-    public void act(GameController gameController) {
-
-        gameController.setFocusable(true);
-        gameController.requestFocus();
-        gameController.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                int pressedKey = e.getKeyCode();
-
-                if (pressedKey == 37 || pressedKey == 65){
-                    currentDirection = Direction.LEFT;
-                } else if (pressedKey == 38 || pressedKey == 87) {
-                    currentDirection = Direction.UP;
-                } else if (pressedKey == 39 || pressedKey == 68) {
-                    currentDirection = Direction.RIGHT;
-                } else if (pressedKey == 40 || pressedKey == 83) {
-                    currentDirection = Direction.DOWN;
-                } else if (pressedKey == 10) {
-                    fire(Gun.ROCKET, gameController);
-                } else if (pressedKey == 32) {
-                    fire(Gun.LASER, gameController);
-                }
-            }
-        });
-
-        move();
+        switch(keyCode) {
+            case 37, 65 -> currentDirection = Direction.LEFT;
+            case 38, 87 -> currentDirection = Direction.UP;
+            case 39, 68 -> currentDirection = Direction.RIGHT;
+            case 40, 83 -> currentDirection = Direction.DOWN;
+            case 10 -> fire(Gun.ROCKET, game);
+            case 32 -> fire(Gun.LASER, game);
+        }
     }
 }

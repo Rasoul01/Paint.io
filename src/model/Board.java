@@ -1,11 +1,14 @@
 package model;
 
-import java.awt.*;
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
-public class Board {
+public class Board implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     private final HashMap<Coordinate, Tile> tilesMap = new HashMap<>();
 
     public ArrayList<Tile> getAreaTiles (Coordinate topLeftCorner, Coordinate bottomRightCorner) {
@@ -17,79 +20,6 @@ public class Board {
                 areaTiles.add(getTile(i, j));
             }
         return areaTiles;
-    }
-    // git commit -am "Added fillTrack method, removed last owned tile (bot now moves to a random owned tile), changed moveTo method a bit & Changed getTile method signature"
-
-    public void draw (Graphics g, CopyOnWriteArrayList<Player> playersList, HumanPlayer mainPlayer,
-                      int colsCount, int rowsCount, int unitSize) {
-
-//        coordinates start from top-left corner
-
-//        draw Background
-        for (int j = 0; j < rowsCount; j++) {
-            for (int i = 0; i < colsCount; i++) {
-                if ((i + j) % 2 == 0) {
-                    g.setColor(Color.lightGray);
-                } else {
-                    g.setColor(Color.WHITE);
-                }
-                g.fillRect(i*unitSize, j*unitSize, unitSize, unitSize);
-            }
-        }
-
-
-        //draw tiles
-        ArrayList<Tile> areaTiles = getAreaTiles(new Coordinate(mainPlayer.getX() - (colsCount / 2), mainPlayer.getY() + (rowsCount / 2)),
-                new Coordinate(mainPlayer.getX() + (colsCount / 2), mainPlayer.getY() - (rowsCount / 2)));
-
-        int tileCounter = 0;
-
-        for (int j = 0; j < rowsCount; j++) {
-            for (int i = 0; i < colsCount; i++) {
-
-                Tile tile = areaTiles.get(tileCounter);
-
-                if (tile.getOwner() == null && tile.getTrackOwner() == null) {
-                    g.setColor(new Color(255,255,255,0));
-                } else if (tile.getOwner() != null && tile.getTrackOwner() == null) {
-                    g.setColor(tile.getOwner().getColor());
-                } else if (tile.getOwner() == null && tile.getTrackOwner() != null) {
-                    g.setColor(Colors.lighter(tile.getTrackOwner().getColor()));
-                } else if (tile.getOwner() != null && tile.getTrackOwner() != null) {
-                    g.setColor(Colors.blend(tile.getOwner().getColor(), tile.getTrackOwner().getColor()));
-                }
-
-                tileCounter++;
-                g.fillRect(i*unitSize, j*unitSize, unitSize, unitSize);
-
-            }
-        }
-
-
-        //draw players
-        int drawX, drawY;
-        g.setFont(new Font(null, Font.PLAIN, 30));
-
-        for (Player player : playersList) {
-
-            if (Math.abs(player.getX() - mainPlayer.getX()) < ((colsCount / 2) + 1) &&
-                    Math.abs(player.getY() - mainPlayer.getY()) < ((rowsCount / 2) + 1)) {
-
-                // x and y position relative to humanPlayer at which player should be drawn
-                drawX = (player.getX() - mainPlayer.getX() + (colsCount / 2)) * unitSize;
-                drawY = ((-1 * (player.getY() - mainPlayer.getY())) + (rowsCount / 2)) * unitSize;
-
-                g.setColor(Colors.darker(player.getColor()));
-                g.drawString(player.getUsername(), drawX , (int) (drawY - unitSize / 3.0));
-                g.fillRoundRect(drawX, drawY, unitSize, unitSize, (int) (unitSize / 2.0), (int) (unitSize / 2.0));
-            }
-        }
-
-        //other
-        g.setFont(new Font(null, Font.BOLD, 30));
-        g.setColor(Color.BLACK);
-        g.drawString("Point: " + mainPlayer.getOwnedTilesCount(), 50 , 50);
-        g.drawString("Coordinate: " + mainPlayer.getX()+ " , " + mainPlayer.getY(), 50 , 100);
     }
 
     public Tile getTile (int x, int y) {

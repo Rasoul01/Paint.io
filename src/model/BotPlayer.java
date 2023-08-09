@@ -1,11 +1,15 @@
 package model;
 
-import application.GameController;
+import application.Game;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Random;
 
 public class BotPlayer extends Player {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     private final int level;
     private static int id;
     private Tile targetTile;
@@ -21,32 +25,31 @@ public class BotPlayer extends Player {
         this.username = "Bot" + id;
     }
 
-    @Override
-    public void act(GameController gameController) {
+    public void act(Game game) {
 
         if (level > 1 && !isRocketLaunched) {
-            for (Player player : gameController.getPlayersList()) {
+            for (Player player : game.getPlayersList()) {
                 if (player != this) {
                     switch (currentDirection) {
                         case UP -> {
                             if (player.getY() - this.y >= 4 && player.getY() - this.y <= 6 &&
                                     player.getX() - this.x >= -1 && player.getX() - this.x <= 1)
-                                fire(Gun.ROCKET, gameController);
+                                fire(Gun.ROCKET, game);
                         }
                         case DOWN -> {
                             if (player.getY() - this.y >= -6 && player.getY() - this.y <= -4 &&
                                     player.getX() - this.x >= -1 && player.getX() - this.x <= 1)
-                                fire(Gun.ROCKET, gameController);
+                                fire(Gun.ROCKET, game);
                         }
                         case RIGHT -> {
                             if (player.getX() - this.x >= 4 && player.getX() - this.x <= 6 &&
                                     player.getY() - this.y >= -1 && player.getY() - this.y <= 1)
-                                fire(Gun.ROCKET, gameController);
+                                fire(Gun.ROCKET, game);
                         }
                         case LEFT -> {
                             if (player.getX() - this.x >= -6 && player.getX() - this.x <= -4 &&
                                     player.getY() - this.y >= -1 && player.getY() - this.y <= 1)
-                                fire(Gun.ROCKET, gameController);
+                                fire(Gun.ROCKET, game);
                         }
                     }
                 }
@@ -54,7 +57,7 @@ public class BotPlayer extends Player {
         }
 
         if (level > 2) {
-            ArrayList<Tile> areaTiles = gameController.getBoard().getAreaTiles(new Coordinate(x - 4, y + 4),
+            ArrayList<Tile> areaTiles = game.getBoard().getAreaTiles(new Coordinate(x - 4, y + 4),
                     new Coordinate(x + 4, y - 4));
 
             for (Tile tile : areaTiles) {
